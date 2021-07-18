@@ -4,6 +4,7 @@ const newExpense = document.querySelector("form");
 const newTitle = document.querySelector(".title");
 const newAmount = document.querySelector(".amount");
 const newDate = document.querySelector(".date");
+const filter = document.querySelector(".year-filter");
 
 const expenses = [
   {
@@ -51,8 +52,6 @@ const renderExpensesList = (expenses) => {
   expensesList.insertAdjacentHTML("afterbegin", html);
 };
 
-renderExpensesList(expenses);
-
 // Add new Expense to the list
 newExpense.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -61,7 +60,27 @@ newExpense.addEventListener("submit", (e) => {
     amount: newAmount.value,
     date: new Date(newDate.value),
   };
-  renderExpensesList([expenseData, ...expenses]);
+  expenses.unshift(expenseData);
+  filterExpense(filter.value);
 });
 
-const expenseFilter = () => {};
+const filterExpense = (year) => {
+  const filterExpenses = expenses.filter(
+    (expense) => expense.date.getFullYear().toString() === year
+  );
+  expensesList.innerHTML = "";
+  renderExpensesList(filterExpenses);
+};
+
+filter.addEventListener("change", (e) => {
+  const year = e.target.value;
+  filterExpense(year);
+});
+
+const init = () => {
+  const defaultYear = new Date().getFullYear().toString();
+  filter.value = defaultYear;
+  filterExpense(defaultYear);
+};
+
+init();
