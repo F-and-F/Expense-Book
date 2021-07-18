@@ -10,7 +10,7 @@
   </head>
   <body>
     <div class="new-expense">
-      <form>
+      <form class="hidden">
         <div class="new-expense__controls">
           <div class="new-expense__control">
             <label>Title</label>
@@ -26,10 +26,11 @@
           </div>
         </div>
         <div class="new-expense__actions">
-          <button>Cancel</button>
+          <button class="btn-cancel">Cancel</button>
           <button type="submit">Add Expense</button>
         </div>
       </form>
+      <button class="add-expense-btn">Add new expense</button>
     </div>
     <div class="expenses">
       <div class="expenses-filter">

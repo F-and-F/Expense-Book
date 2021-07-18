@@ -5,6 +5,8 @@ const newTitle = document.querySelector(".title");
 const newAmount = document.querySelector(".amount");
 const newDate = document.querySelector(".date");
 const filter = document.querySelector(".year-filter");
+const addExpenseBtn = document.querySelector(".add-expense-btn");
+const cancelBtn = document.querySelector(".btn-cancel");
 
 const expenses = [
   {
@@ -76,6 +78,15 @@ filter.addEventListener("change", (e) => {
   const year = e.target.value;
   filterExpense(year);
 });
+
+const toggleWindow = () => {
+  newExpense.classList.toggle("hidden");
+  addExpenseBtn.classList.toggle("hidden");
+};
+
+addExpenseBtn.addEventListener("click", toggleWindow);
+
+cancelBtn.addEventListener("click", toggleWindow);
 
 const init = () => {
   const defaultYear = new Date().getFullYear().toString();
