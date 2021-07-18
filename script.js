@@ -1,4 +1,6 @@
 "use strict";
+
+// DOM Selectors:
 const expensesList = document.querySelector(".expenses-list");
 const newExpense = document.querySelector("form");
 const newTitle = document.querySelector(".title");
@@ -7,7 +9,9 @@ const newDate = document.querySelector(".date");
 const filter = document.querySelector(".year-filter");
 const addExpenseBtn = document.querySelector(".add-expense-btn");
 const cancelBtn = document.querySelector(".btn-cancel");
+const chartContainer = document.querySelector(".chart");
 
+// Initial Date:
 const expenses = [
   {
     id: "e1",
@@ -30,6 +34,22 @@ const expenses = [
   },
 ];
 
+const chartDataPoints = [
+  { label: "Jan", value: 0 },
+  { label: "Feb", value: 0 },
+  { label: "Mar", value: 0 },
+  { label: "Apr", value: 0 },
+  { label: "May", value: 0 },
+  { label: "Jun", value: 0 },
+  { label: "Jul", value: 0 },
+  { label: "Aug", value: 0 },
+  { label: "Sep", value: 0 },
+  { label: "Oct", value: 0 },
+  { label: "Nov", value: 0 },
+  { label: "Dec", value: 0 },
+];
+
+// Function:
 const renderExpensesList = (expenses) => {
   const html = expenses
     .map((expense) => {
@@ -54,7 +74,64 @@ const renderExpensesList = (expenses) => {
   expensesList.insertAdjacentHTML("afterbegin", html);
 };
 
-// Add new Expense to the list
+const filterExpense = (year) => {
+  // filtering process
+  const filteredExpenses = expenses.filter(
+    (expense) => expense.date.getFullYear().toString() === year
+  );
+
+  // reinitializing view and state
+  expensesList.innerHTML = "";
+  chartDataPoints.forEach((dataPoint) => {
+    dataPoint.value = 0;
+  });
+
+  // rendering the filtered results on the page
+  renderExpensesList(filteredExpenses);
+
+  // updating chart data points
+  filteredExpenses.forEach((expense) => {
+    const expenseMonth = expense.date.getMonth();
+    chartDataPoints[expenseMonth].value += expense.amount;
+  });
+
+  // calculating maximum amount of expenditure
+  const dataPointValues = chartDataPoints.map((dataPoint) => dataPoint.value);
+  const maxValue = Math.max(...dataPointValues);
+
+  // rendering chart bars
+  chartContainer.innerHTML = "";
+  chartDataPoints.forEach((dataPoint) => {
+    let barFillHeight = "0%";
+    if (maxValue > 0) {
+      barFillHeight = Math.round((dataPoint.value / maxValue) * 100) + "%";
+    }
+    const html = ` <div class="chart-bar">
+                      <div class="chart-bar__inner">
+                        <div
+                          class="chart-bar__fill"
+                          style= "height: ${barFillHeight}"
+                        ></div>
+                      </div>
+                      <div class="chart-bar__label">${dataPoint.label}</div>
+                    </div>`;
+    chartContainer.insertAdjacentHTML("beforeend", html);
+  });
+};
+
+const toggleWindow = () => {
+  newExpense.classList.toggle("hidden");
+  addExpenseBtn.classList.toggle("hidden");
+};
+
+const init = () => {
+  const defaultYear = new Date().getFullYear().toString();
+  filter.value = defaultYear;
+  filterExpense(defaultYear);
+};
+
+// Event Handlers:
+// add new Expense to the list
 newExpense.addEventListener("submit", (e) => {
   e.preventDefault();
   const expenseData = {
@@ -66,32 +143,15 @@ newExpense.addEventListener("submit", (e) => {
   filterExpense(filter.value);
 });
 
-const filterExpense = (year) => {
-  const filterExpenses = expenses.filter(
-    (expense) => expense.date.getFullYear().toString() === year
-  );
-  expensesList.innerHTML = "";
-  renderExpensesList(filterExpenses);
-};
-
+// change the year
 filter.addEventListener("change", (e) => {
   const year = e.target.value;
   filterExpense(year);
 });
 
-const toggleWindow = () => {
-  newExpense.classList.toggle("hidden");
-  addExpenseBtn.classList.toggle("hidden");
-};
-
+// toggle intro window
 addExpenseBtn.addEventListener("click", toggleWindow);
-
 cancelBtn.addEventListener("click", toggleWindow);
 
-const init = () => {
-  const defaultYear = new Date().getFullYear().toString();
-  filter.value = defaultYear;
-  filterExpense(defaultYear);
-};
-
+// initialize the page
 init();
