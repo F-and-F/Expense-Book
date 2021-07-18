@@ -1,11 +1,11 @@
 "use strict";
 const expensesList = document.querySelector(".expenses-list");
 const newExpense = document.querySelector("form");
-const newTitle = document.querySelector("title");
-const newAmount = document.querySelector("amount");
-const newDate = document.querySelector("date");
+const newTitle = document.querySelector(".title");
+const newAmount = document.querySelector(".amount");
+const newDate = document.querySelector(".date");
 
-const DUMMY_EXPENSES = [
+const expenses = [
   {
     id: "e1",
     title: "Toilet Paper",
@@ -27,14 +27,16 @@ const DUMMY_EXPENSES = [
   },
 ];
 
-const html = DUMMY_EXPENSES.map((expense) => {
-  const month = expense.date.toLocaleString("en-US", { month: "long" });
-  const day = expense.date.toLocaleString("en-US", { day: "2-digit" });
-  const year = expense.date.getFullYear();
-  return `<li>
+const renderExpensesList = (expenses) => {
+  const html = expenses
+    .map((expense) => {
+      const month = expense.date.toLocaleString("en-US", { month: "long" });
+      const day = expense.date.toLocaleString("en-US", { day: "2-digit" });
+      const year = expense.date.getFullYear();
+      return `<li>
             <div class="expense-item">
                 <div class="expense-date">
-                    <div class="expense-date__month">$${month}</div>
+                    <div class="expense-date__month">${month}</div>
                     <div class="expense-date__year">${year}</div>
                     <div class="expense-date__day">${day}</div>
                 </div>
@@ -44,5 +46,22 @@ const html = DUMMY_EXPENSES.map((expense) => {
                 </div> 
             </div>
           </li>`;
-}).join("");
-expensesList.insertAdjacentHTML("afterbegin", html);
+    })
+    .join("");
+  expensesList.insertAdjacentHTML("afterbegin", html);
+};
+
+renderExpensesList(expenses);
+
+// Add new Expense to the list
+newExpense.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const expenseData = {
+    title: newTitle.value,
+    amount: newAmount.value,
+    date: new Date(newDate.value),
+  };
+  renderExpensesList([expenseData, ...expenses]);
+});
+
+const expenseFilter = () => {};
